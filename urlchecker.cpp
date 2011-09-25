@@ -1,58 +1,107 @@
-#include "urlchecker.h"
 #include <QDebug>
+#include "urlchecker.h"
+#include "logger.h"
+#include <QMap>
 
 URLChecker::URLChecker(QObject *parent) :
     QObject(parent)
-{
-    qDebug ()<<"available sql drivers"<<QSqlDatabase::drivers ();
-    QSqlDatabase db=QSqlDatabase::addDatabase ("QPSQL");
+    {
+        stdReader = new stdInReader(this);
+        stdReader->start (QThread::HighestPriority);
+        qint64 r= stdReader->init ();
+        Logger::Write ("STDIN reader start with code : "+QString::number (r),Logger::Debug);
+        connect (stdReader,SIGNAL(stdinReadyRead(QByteArray)),this,SLOT(processSTDINData(QByteArray)));
+    }
+void URLChecker::start()
+    {
+        Logger::Write ("Available sql drivers "+QSqlDatabase::drivers ().join (" "),Logger::Debug);
+        QSqlDatabase db=QSqlDatabase::addDatabase ("QPSQL");
+        QDir appdir(qApp->applicationDirPath ());
+        appdir.cdUp ();
+        appdir.cd("etc/");
+        //qDebug ()<<"now directory : "<<appdir.path ();
+        reader = new ConfigReader(0);
+        reader->init (appdir.path ()+"/squidredirector.ini");
 
-    db.setHostName ("127.0.0.1");
-    db.setPort (5432);
-    db.setUserName ("tarif");
-    db.setPassword ("tarif");
+        db.setHostName (reader->databaseHost ());
+        db.setPort (reader->databasePort ());
+        db.setUserName (reader->databaseUser ());
+        db.setPassword (reader->databasePassword ());
+        db.setDatabaseName (reader->databaseName ());
 
-    qDebug ()<<this->checkForBlackURL ("http://kavkazcenter.com");
-    return;
-    if (db.open ())
-        {
-            qDebug ()<<"db opened";
-        }
-    else
-        {
-            qDebug ()<<db.lastError ();
-        }
+        if (db.open ())
+            {
+                Logger::Write ("Database open OK",Logger::Info);
+
+            }
+        else
+            {
+                Logger::Write ("Error on connect to database : "+db.lastError ().text (),Logger::Fatal);
+                //qDebug ()<<db.lastError ().text ();
+            }
 
 
-}
 
-bool URLChecker::checkForBlackURL(const QString &url)
-{
-    QSqlDatabase d=QSqlDatabase::database ();
-    if (d.open ())
-        {
-            QSqlQuery q;
-            q.prepare ("select isblackdomain2(:url)");
-            q.bindValue (":url",url);
-            if (!q.exec ())
-                {
+    }
 
-                    emit databasePromblem (q.lastError ().text ());
-                    qDebug ()<<q.lastError ().text ();
-                }
-            else
-                {
-                    while (q.next ())
-                        {
-                            return q.value (0).toBool ();
+void URLChecker::processSTDINData(const QByteArray &badata)
+    {
+        QSqlDatabase db= QSqlDatabase::database ();
 
-                        }
-                }
-        }
-    else
-        {
-            qDebug ()<<d.lastError ();
-            emit databasePromblem (d.lastError ().text ());
-        }
-    return true;
-}
+        QString indata(badata);
+        Logger::Write ("Incomming data '"+indata+"'",Logger::Debug);
+        QStringList incomming=indata.split (" ");
+        /*
+        if (incomming.size ()!=4)
+            {
+                Logger::Write ("Incomming data not a squid  format '"+indata+"'",Logger::Error);
+                stdReader->writetoStdOut (badata);
+                return;
+
+            }
+            */
+        QString url=incomming.at (0);
+        QString ip=incomming.at (1);
+        ip=ip.remove ("/-",Qt::CaseInsensitive);
+
+        if (db.open ())
+            {
+                QSqlQuery selQuery;
+                selQuery.prepare ("select canaccesstourl(:ip,:url)");
+                selQuery.bindValue (":ip",ip);
+                selQuery.bindValue (":url",url);
+
+                if (!selQuery.exec ())
+                    {
+                        Logger::Write ("Db error "+selQuery.lastError ().text (),Logger::Error);
+                        emit databasePromblem (selQuery.lastError ().text ());
+                        QString  result="%1\n";
+                        url="http://google.com";
+                        result=result.arg (url);
+                        stdReader->writetoStdOut (result.toAscii ());
+                        return;
+                    }
+                else {
+                        while (selQuery.next ())
+                            {
+                                url=selQuery.value (0).toString ();
+                            }
+                        QString  result="%1\n";
+                        result=result.arg(url);
+                        Logger::Write("Returning result"+result,Logger::Debug);
+                        stdReader->writetoStdOut (result.toAscii ());
+
+                    }
+            }
+        else
+            {
+                QString  result="%1\n";
+                url=reader->sorryURL ();
+                result=result.arg (url);
+                stdReader->writetoStdOut (result.toAscii ());
+
+            }
+    }
+
+
+

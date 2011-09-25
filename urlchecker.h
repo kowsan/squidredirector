@@ -3,17 +3,27 @@
 
 #include <QObject>
 #include <QtSql>
+
+#include "stdinreader.h"
+#include "configreader.h"
+
 class URLChecker : public QObject
 {
         Q_OBJECT
     public:
         explicit URLChecker(QObject *parent = 0);
-        bool isWhite;
-        bool isBlack;
-        bool checkForBlackURL(const QString &url);
+
+        //  bool checkForBlackURL(const QString &url);
+        ConfigReader *reader;
+        stdInReader *stdReader;
+
+        void start();
+
     signals:
         void databasePromblem(const QString &problem);
-private:
+
+    private slots:
+        void processSTDINData(const QByteArray &badata);
 
 
     public slots:

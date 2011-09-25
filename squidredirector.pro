@@ -8,7 +8,17 @@ QT       += core sql
 
 QT       -= gui
 
-TARGET = squidredirector
+#установка конфигурации
+config.files = etc/squidredirector.ini
+config.path = /opt/petrosoft/squidredirector/etc
+INSTALLS+= config
+
+bin.files = bin/squidredirector
+bin.path = /opt/petrosoft/squidredirector/bin
+
+INSTALLS+= bin
+
+TARGET = bin/squidredirector
 CONFIG   += console
 CONFIG   -= app_bundle
 
@@ -16,9 +26,26 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    urlchecker.cpp
+    urlchecker.cpp \
+    stdinreader.cpp \
+    configreader.cpp \
+    logger.cpp
 
 HEADERS += \
-    urlchecker.h
+    urlchecker.h \
+    stdinreader.h \
+    configreader.h \
+    logger.h
+
+OTHER_FILES += \
+    etc/squidredirector.ini
+
+
+
+
+
+
+
+
 
 
