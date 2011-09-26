@@ -63,8 +63,8 @@ void URLChecker::processSTDINData(const QByteArray &badata)
             */
     QString url = incomming.at (0).trimmed ();
     QString ip = incomming.at (1);
-    QString ident = incomming.at (2);
-    QString met = incomming.at (3);
+    //  QString ident = incomming.at (2);
+    //  QString met = incomming.at (3);
     ip=ip.remove ("/-",Qt::CaseInsensitive);
 
     if (db.open ())
@@ -78,9 +78,7 @@ void URLChecker::processSTDINData(const QByteArray &badata)
                 {
                     Logger::Write ("Db error "+selQuery.lastError ().text (),Logger::Error);
                     emit databasePromblem (selQuery.lastError ().text ());
-                    QString  result="%1\n";
-                    url="http://google.com";
-                    result=result.arg (url);
+                    QString  result=url+"\n";
                     stdReader->writetoStdOut (result.toAscii ());
                     return;
                 }
@@ -89,19 +87,15 @@ void URLChecker::processSTDINData(const QByteArray &badata)
                         {
                             url=selQuery.value (0).toString ();
                         }
-                    //QString  result="%1 %2 %3 %4\n";
-                    QString  result="%1\n";
-                    result=result.arg (url);
+                    QString  result=url+"\n";
                     Logger::Write("Returning result'"+result+"'",Logger::Debug);
                     stdReader->writetoStdOut (result.toAscii ());
-
                 }
         }
     else
         {
-            QString  result="%1\n";
             url=reader->sorryURL ();
-            result=result.arg (url).arg (ip).arg (ident).arg (met);
+            QString  result=url+"\n";
             stdReader->writetoStdOut (result.toAscii ());
 
         }
