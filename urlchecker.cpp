@@ -65,7 +65,7 @@ void URLChecker::processSTDINData(const QByteArray &badata)
     QString ip = incomming.at (1);
     //  QString ident = incomming.at (2);
     //  QString met = incomming.at (3);
-    ip=ip.remove ("/-",Qt::CaseInsensitive);
+    ip=ip.remove ("/-\\",Qt::CaseInsensitive);
 
     if (db.open ())
         {
