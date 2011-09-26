@@ -38,7 +38,9 @@ HEADERS += \
     logger.h
 
 OTHER_FILES += \
-    etc/squidredirector.ini
+    etc/squidredirector.ini \
+    sql/database.sql
+
 
 
 

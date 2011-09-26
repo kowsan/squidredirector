@@ -8,7 +8,7 @@ URLChecker::URLChecker(QObject *parent) :
 {
     stdReader = new stdInReader(this);
     stdReader->start (QThread::HighestPriority);
-    qint64 r= stdReader->init ();
+    qint8 r= stdReader->init ();
     Logger::Write ("STDIN reader start with code : "+QString::number (r),Logger::Debug);
     connect (stdReader,SIGNAL(stdinReadyRead(QByteArray)),this,SLOT(processSTDINData(QByteArray)));
     //connect ()
@@ -65,7 +65,7 @@ void URLChecker::processSTDINData(const QByteArray &badata)
     QString ip = incomming.at (1);
     //  QString ident = incomming.at (2);
     //  QString met = incomming.at (3);
-    ip=ip.remove ("/-\\",Qt::CaseInsensitive);
+    ip=ip.remove ("/-",Qt::CaseInsensitive);
 
     if (db.open ())
         {
