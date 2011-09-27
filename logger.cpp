@@ -5,22 +5,22 @@ Logger::Logger(QObject *parent) :
 {
 
 
-    }
+}
 
 QString Logger::logFilePath()
-    {
+{
     QDir appdir(qApp->applicationDirPath ());
     appdir.cdUp ();
     appdir.cd("etc/");
     QSettings sets(appdir.path ()+"/squidredirector.ini",QSettings::IniFormat);
     return sets.value("logging/file","application.log").toString();
-    }
+}
 
- void Logger::Write(QString message, TypeError te)
-    {
-     message=message.simplified ();
+void Logger::Write(QString message, TypeError te)
+{
+    message=message.simplified ();
     QString prefix;
-    prefix=QDateTime::currentDateTime ().toString ("yyyy-MM-dd hh:mm:ss");
+    prefix=QDateTime::currentDateTime ().toString ("yyyy-MM-dd hh:mm:ss")+" ["+QString::number (qApp->applicationPid ())+"]";
     switch (te)
         {
         case Error:
@@ -46,12 +46,12 @@ QString Logger::logFilePath()
     f.setFileName (logFilePath ());
     if (f.open (QIODevice::Append))
         {
-        f.write (message.toAscii ());
-        f.flush ();
-        f.close ();
+            f.write (message.toAscii ());
+            f.flush ();
+            f.close ();
         }
     else
         {
-        qDebug ()<<f.errorString ();
+            qDebug ()<<f.errorString ();
         }
-    }
+}

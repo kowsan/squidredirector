@@ -19,12 +19,15 @@ class URLChecker : public QObject
 
         void start();
 
+        static  inline bool validateIp(const QString &ipaddr);
+    private:
+        QString m_sorryURL;
     signals:
         void databasePromblem(const QString &problem);
 
     private slots:
         void processSTDINData(const QByteArray &badata);
-
+        void analyzeSignal(int signal);
 
     public slots:
 

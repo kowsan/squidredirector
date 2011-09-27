@@ -1,7 +1,7 @@
 #include <QDebug>
 #include "urlchecker.h"
 #include "logger.h"
-#include <QMap>
+
 
 URLChecker::URLChecker(QObject *parent) :
     QObject(parent)
@@ -11,7 +11,16 @@ URLChecker::URLChecker(QObject *parent) :
     qint8 r= stdReader->init ();
     Logger::Write ("STDIN reader start with code : "+QString::number (r),Logger::Debug);
     connect (stdReader,SIGNAL(stdinReadyRead(QByteArray)),this,SLOT(processSTDINData(QByteArray)));
-    //connect ()
+    //скорей всего не работает
+    connect (qApp,SIGNAL(unixSignal(int)),this,SLOT(analyzeSignal(int)),Qt::DirectConnection);
+
+
+}
+void URLChecker::analyzeSignal(int signal)
+{
+    Logger::Write ("Process  squid signal ["+QString::number (signal)+"]",Logger::Debug);
+
+
 }
 void URLChecker::start()
 {
@@ -23,6 +32,7 @@ void URLChecker::start()
     //qDebug ()<<"now directory : "<<appdir.path ();
     reader = new ConfigReader(0);
     reader->init (appdir.path ()+"/squidredirector.ini");
+    m_sorryURL=reader->sorryURL ();
 
     db.setHostName (reader->databaseHost ());
     db.setPort (reader->databasePort ());
@@ -44,59 +54,81 @@ void URLChecker::start()
 
 
 }
+bool URLChecker::validateIp(const QString &ipaddr)
+{
+    QRegExp rx("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
+
+    if (rx.indexIn (ipaddr)>-1)
+        {
+            return true;
+        }
+
+    return false;
+}
 
 void URLChecker::processSTDINData(const QByteArray &badata)
 {
-    QSqlDatabase db= QSqlDatabase::database ();
 
-    QString indata(badata);
-    Logger::Write ("Incomming data '"+indata+"'",Logger::Debug);
-    QStringList incomming=indata.split (" ");
-    /*
-        if (incomming.size ()!=4)
-            {
-                Logger::Write ("Incomming data not a squid  format '"+indata+"'",Logger::Error);
-                stdReader->writetoStdOut (badata);
-                return;
-
-            }
-            */
-    QString url = incomming.at (0).trimmed ();
-    QString ip = incomming.at (1);
+    QString _indata(badata);
+    Logger::Write ("Incomming data '"+_indata+"'",Logger::Debug);
+    QStringList incomming=_indata.split (" ");
+    if (incomming.size ()<2)
+        {
+            //если чтото не так со входным массивом
+            return;
+        }
+    QString _url = incomming.at (0).trimmed ();
+    QString _ip = incomming.at (1).trimmed ();
     //  QString ident = incomming.at (2);
     //  QString met = incomming.at (3);
-    ip=ip.remove ("/-",Qt::CaseInsensitive);
+    _ip=_ip.remove ("/-",Qt::CaseInsensitive);
+    //проверяем ip
+    if (!this->validateIp (_ip))
+        {
+            //если ip не поддается проверке не делаем запрос к  СУБД
+            Logger::Write ("Invalid ip address specified '"+_ip+"'",Logger::Error);
+            return;
+        }
 
+    /*
+    здесь может тратится много времени на открытие соединения к СУБД
+    однако не будет проблем в случае недоступности  СУБД - редиректор сразу подцепится к база
+    */
+
+    QSqlDatabase db= QSqlDatabase::database ();
     if (db.open ())
         {
-            QSqlQuery selQuery;
-            selQuery.prepare ("select canaccesstourl(:ip,:url)");
-            selQuery.bindValue (":ip",ip);
-            selQuery.bindValue (":url",url);
+            QSqlQuery _selQuery;
+            _selQuery.prepare ("select canaccesstourl(:ip,:url)");
+            _selQuery.bindValue (":ip",_ip);
+            _selQuery.bindValue (":url",_url);
 
-            if (!selQuery.exec ())
+            if (!_selQuery.exec ())
                 {
-                    Logger::Write ("Db error "+selQuery.lastError ().text (),Logger::Error);
-                    emit databasePromblem (selQuery.lastError ().text ());
-                    QString  result=url+"\n";
-                    stdReader->writetoStdOut (result.toAscii ());
+                    //если проблемы в базе или при выполнеии функции
+                    Logger::Write ("Db error "+_selQuery.lastError ().text (),Logger::Error);
+                    emit databasePromblem (_selQuery.lastError ().text ());
+                    QString  _result=m_sorryURL+"\n";
+                    stdReader->writetoStdOut (_result.toAscii ());
                     return;
                 }
             else {
-                    while (selQuery.next ())
+                    while (_selQuery.next ())
                         {
-                            url=selQuery.value (0).toString ();
+                            _url=_selQuery.value (0).toString ();
                         }
-                    QString  result=url+"\n";
-                    Logger::Write("Returning result'"+result+"'",Logger::Debug);
-                    stdReader->writetoStdOut (result.toAscii ());
+                    //когда все хорошо
+                    QString  _result=_url+"\n";
+                    Logger::Write("Returning result '"+_result+"' ",Logger::Debug);
+                    stdReader->writetoStdOut (_result.toAscii ());
                 }
         }
     else
         {
-            url=reader->sorryURL ();
-            QString  result=url+"\n";
-            stdReader->writetoStdOut (result.toAscii ());
+            //переделан механизм чтобы постоянно не перечитывать файл конфига
+            _url = m_sorryURL;
+            QString  _result=_url+"\n";
+            stdReader->writetoStdOut (_result.toAscii ());
 
         }
 }

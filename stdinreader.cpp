@@ -24,23 +24,13 @@ void stdInReader::run()
     if (!inited) return;
     while (true)
         {
-            /* while (stdIn.bytesAvailable()==0) //<------- ВНИМАНИЕ! так - НЕ работает... да) QT 4.5
-                                            //почему-то пока не начнешь читать, размер буфера не обновится...
-                this->msleep(1000);
-     */
+
             data=stdIn.read(1); //тут "блокирующее чтение"... потому никаких sleep не надо
             if (stdIn.bytesAvailable()>0)
-                data.append(stdIn.read(stdIn.bytesAvailable()));//и только тут буфер покажет сколько нам послупило данных. лол)
-            emit stdinReadyRead(data);
 
-            /*
-        ////------ далее - демо код для примера ----------
-        //// что бы оно заработало - надо stdOut.open... раскомментировать выше...
-                stdOut.write(QByteArray().append(QString("[")));
-                stdOut.write(data);
-                stdOut.write(QByteArray().append(QString("]")));
-                stdOut.flush();//отправим сразу...
-       */
+                    data.append(stdIn.read(stdIn.bytesAvailable()));//и только тут буфер покажет сколько нам послупило данных. лол)
+                    emit stdinReadyRead(data);
+
         };
     return;
 }
