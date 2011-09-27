@@ -68,7 +68,8 @@ bool URLChecker::validateIp(const QString &ipaddr)
 
 void URLChecker::processSTDINData(const QByteArray &badata)
 {
-
+    QTime t;
+    t.start ();
     QString _indata(badata);
     Logger::Write ("Incomming data '"+_indata+"'",Logger::Debug);
     QStringList incomming=_indata.split (" ");
@@ -115,6 +116,7 @@ void URLChecker::processSTDINData(const QByteArray &badata)
             else {
                     while (_selQuery.next ())
                         {
+
                             _url=_selQuery.value (0).toString ();
                         }
                     //когда все хорошо
@@ -131,6 +133,9 @@ void URLChecker::processSTDINData(const QByteArray &badata)
             stdReader->writetoStdOut (_result.toAscii ());
 
         }
+
+    int et=t.elapsed ();
+    Logger::Write ("Processing data from time'"+QString::number (et)+"' - millisecond",Logger::Debug);
 }
 
 
