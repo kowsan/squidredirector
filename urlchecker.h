@@ -12,16 +12,14 @@ class URLChecker : public QObject
         Q_OBJECT
     public:
         explicit URLChecker(QObject *parent = 0);
-
-        //  bool checkForBlackURL(const QString &url);
         ConfigReader *reader;
         stdInReader *stdReader;
-
         void start();
 
-        bool validateIp(const QString &ipaddr);
     private:
         QString m_sorryURL;
+        bool validateIp(const QString &ipaddr);
+
     signals:
         void databasePromblem(const QString &problem);
 

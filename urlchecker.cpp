@@ -130,6 +130,8 @@ void URLChecker::processSTDINData(const QByteArray &badata)
             //переделан механизм чтобы постоянно не перечитывать файл конфига
             _url = m_sorryURL;
             QString  _result=_url+"\n";
+            Logger::Write ("Cannot open database  '"+db.lastError ().text ()+
+                           "' . Sending sorry url to client '"+m_sorryURL+"'",Logger::Error);
             stdReader->writetoStdOut (_result.toAscii ());
 
         }
