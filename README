@@ -16,9 +16,11 @@
 4) Настроить файл конфигурации etc/squidredirector.ini
 
 5) Создать базу данных из скриптов
-    -Выполнить 01.sql (создастся пользователь tarif которому необходимо будет задать пароль)
-    -Выполнить 02.sql
-    -Выполнить 03.sql
+    создать пользователя tarif (скрипт 01.sql)
+        psql -U postgres -W -h 127.0.0.1 -f '/opt/petrosoft/squidredirector/sql/01.sql'
+    создать базу данных tarif (скрипт 02.sql)
+        psql -U postgres -W -h 127.0.0.1 -f '/opt/petrosoft/squidredirector/sql/02.sql'
+
 
 6) Завести устройства в базе скриптом
 вместо deviceip,phonenumber,description подставить актуальные данные

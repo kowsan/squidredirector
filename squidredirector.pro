@@ -58,7 +58,6 @@ OTHER_FILES += \
     README \
     sql/01.sql \
     sql/02.sql \
-    sql/03.sql \
     var/sorry.html \
     deb/description-pak \
     description-pak \
@@ -88,6 +87,7 @@ unix:!symbian:!maemo5:isEmpty(MEEGO_VERSION_MAJOR) {
     target.path = /opt/squidredirector/bin
     INSTALLS += target
 }
+
 
 
 
