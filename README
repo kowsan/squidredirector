@@ -3,5 +3,6 @@
     путь к исполняемому файлу редиректора  и число выполняющихся процессов
         url_rewrite_program /opt/petrosoft/squidredirector/bin/squidredirector
         url_rewrite_children 5
-2)
+2) настроить файл конфигурации etc/squidredirector.ini
+
 

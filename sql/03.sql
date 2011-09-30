@@ -1,12 +1,9 @@
-
-
 SET statement_timeout = 0;
 SET client_encoding = 'UTF8';
 SET standard_conforming_strings = off;
 SET check_function_bodies = false;
 SET client_min_messages = warning;
 SET escape_string_warning = off;
-
 --
 -- TOC entry 339 (class 2612 OID 16442)
 -- Name: plperl; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: tarif
@@ -610,11 +607,7 @@ CREATE TABLE whitelist (
 
 ALTER TABLE public.whitelist OWNER TO tarif;
 
---
--- TOC entry 1531 (class 1259 OID 16411)
--- Dependencies: 3 1532
--- Name: whitelist_id_seq; Type: SEQUENCE; Schema: public; Owner: tarif
---
+
 
 CREATE SEQUENCE whitelist_id_seq
     START WITH 1
@@ -768,14 +761,6 @@ INSERT INTO logtype (id, name) VALUES (2, 'Предупреждение');
 -- Dependencies: 1540
 -- Data for Name: seanses; Type: TABLE DATA; Schema: public; Owner: tarif
 --
-
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (1, 3, '2011-09-22 15:16:12', 1);
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (2, 6, '2011-09-22 15:25:02', 1);
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (3, 1, '2011-09-22 17:48:53', 1);
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (4, 1, '2011-09-26 12:58:48', 1);
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (5, 1, '2011-09-26 13:10:06', 1);
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (6, 1, '2011-09-26 13:21:25', 1);
-INSERT INTO seanses (id, deviceid, accesstime, servicetypeid) VALUES (7, 1, '2011-09-26 13:48:50', 1);
 
 
 --
