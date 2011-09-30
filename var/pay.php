@@ -3,7 +3,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en">
 <head>
 <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-<title>Подсистема доступа в Интернет - / - Хранилище - Redmine</title>
+<title>Подсистема доступа в Интернет</title>
 <?php
 	$lu=$_GET['url'];
 	echo "<a href="."pay://server/url=".$lu.">Платная зона</a>";

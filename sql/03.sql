@@ -9,10 +9,10 @@ SET escape_string_warning = off;
 -- Name: plperl; Type: PROCEDURAL LANGUAGE; Schema: -; Owner: tarif
 --
 
-CREATE PROCEDURAL LANGUAGE plperl;
+--CREATE PROCEDURAL LANGUAGE plperl;
 
 
-ALTER PROCEDURAL LANGUAGE plperl OWNER TO tarif;
+--ALTER PROCEDURAL LANGUAGE plperl OWNER TO tarif;
 
 --
 -- TOC entry 340 (class 2612 OID 16445)
@@ -732,10 +732,10 @@ INSERT INTO blacklist (id, host) VALUES (3, 'kavkazcenter.com');
 -- Data for Name: devices; Type: TABLE DATA; Schema: public; Owner: tarif
 --
 
-INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (1, 'kovalev', '192.168.0.100', '101', 'Kovalev test pc');
-INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (2, 'demchenko', '192.168.0.101', '0101', 'demchenko test pc');
-INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (3, 'terminalstend', '192.168.0.48', '048', 'terminal test pc');
-INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (6, 'prokopenko', '192.168.0.118', '118', 'prokopenko test pc');
+--INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (1, 'kovalev', '192.168.0.100', '101', 'Kovalev test pc');
+--INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (2, 'demchenko', '192.168.0.101', '0101', 'demchenko test pc');
+--INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (3, 'terminalstend', '192.168.0.48', '048', 'terminal test pc');
+--INSERT INTO devices (id, name, ipaddr, phonenumber, comment) VALUES (6, 'prokopenko', '192.168.0.118', '118', 'prokopenko test pc');
 
 
 --

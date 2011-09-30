@@ -1,8 +1,28 @@
-Как устанавливать редиректор
-1) В конфигурационном файле squid (обычно /etc/squid/squid.conf) прописываем
-    путь к исполняемому файлу редиректора  и число выполняющихся процессов
+Требования:
+    -Установленный и настроенный прокси сервер squid
+    -установленная и настроенная СУБД postgresql 8.4 или выше
+Установка:
+1) Настроить acl на прокси сервере squid(фильтруются только адреса у валидных списков)
+
+2) В конфигурационном файле squid (обычно /etc/squid/squid.conf) прописываем
+    путь к исполняемому файлу редиректора  и число выполняющихся процессов(желательно больше 2)
         url_rewrite_program /opt/petrosoft/squidredirector/bin/squidredirector
         url_rewrite_children 5
-2) настроить файл конфигурации etc/squidredirector.ini
+
+3) Скопировать файлы  из папки var (sorry.php и pay.php) в директорию веб сервера
+указанного в конфигурационном файле
+
+4) Настроить файл конфигурации etc/squidredirector.ini
+
+5) Создать базу данных из скриптов
+    -Выполнить 01.sql
+    -Выполнить 02.sql
+    -Выполнить 03.sql
+
+6) Завести устройства в базе скриптом
+вместо deviceip,phonenumber,description подставить актуальные данные
+
+    INSERT INTO devices ( name, ipaddr, phonenumber, comment)
+        VALUES ( 'devicename', 'deviceip', 'phonenumber', 'description');
 
 
