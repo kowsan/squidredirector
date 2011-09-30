@@ -40,7 +40,11 @@ HEADERS += \
 OTHER_FILES += \
     etc/squidredirector.ini \
     sql/database.sql \
-    var/pay.php
+    var/pay.php \
+    README
+
+
+
 
 
 
