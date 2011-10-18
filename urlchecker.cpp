@@ -71,9 +71,6 @@ void URLChecker::processSTDINData(const QByteArray &badata)
 {
     // QTime t;
     // t.start ();
-
-    QString _indata(badata);
-    Logger::Write ("Incomming data '"+_indata+"'",Logger::Debug);
     if (badata.size ()==0)
         {
             Logger::Write ("-=TERMINATED ABNORMALLY=-",Logger::Fatal);
@@ -83,6 +80,9 @@ void URLChecker::processSTDINData(const QByteArray &badata)
             return;
 
         }
+    QString _indata(badata);
+    Logger::Write ("Incomming data '"+_indata+"'",Logger::Debug);
+
     QStringList incomming=_indata.split (" ");
     if (incomming.size ()<2)
         {
