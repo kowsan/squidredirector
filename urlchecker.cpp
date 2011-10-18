@@ -71,6 +71,7 @@ void URLChecker::processSTDINData(const QByteArray &badata)
 {
     // QTime t;
     // t.start ();
+
     if (badata.size ()==0)
         {
             Logger::Write ("-=TERMINATED ABNORMALLY=-",Logger::Fatal);
