@@ -31,4 +31,5 @@ class stdInReader : public QThread
 	QFile stdErr;
 	QByteArray data;
 	bool inited;
+
  };

@@ -50,3 +50,5 @@ int stdInReader::writetoStdErr(const QByteArray &_data)
     stdErr.flush();
     return rz;
 }
+
+

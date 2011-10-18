@@ -7,7 +7,7 @@ URLChecker::URLChecker(QObject *parent) :
     QObject(parent)
 {
     stdReader = new stdInReader(this);
-    stdReader->start (QThread::HighestPriority);
+    stdReader->start (QThread::NormalPriority);
     qint8 r= stdReader->init ();
     Logger::Write ("STDIN reader start with code : "+QString::number (r),Logger::Debug);
     connect (stdReader,SIGNAL(stdinReadyRead(QByteArray)),this,SLOT(processSTDINData(QByteArray)));
@@ -39,6 +39,7 @@ void URLChecker::start()
     db.setUserName (reader->databaseUser ());
     db.setPassword (reader->databasePassword ());
     db.setDatabaseName (reader->databaseName ());
+    m_paymentURL=reader->paymentUrl ();
 
     if (db.open ())
         {
@@ -68,11 +69,20 @@ bool URLChecker::validateIp(const QString &ipaddr)
 
 void URLChecker::processSTDINData(const QByteArray &badata)
 {
-   // QTime t;
-   // t.start ();
+    // QTime t;
+    // t.start ();
 
     QString _indata(badata);
     Logger::Write ("Incomming data '"+_indata+"'",Logger::Debug);
+    if (badata.size ()==0)
+        {
+            Logger::Write ("-=TERMINATED ABNORMALLY=-",Logger::Fatal);
+            stdReader->terminate ();
+            stdReader->wait (5000);
+            exit (-1);
+            return;
+
+        }
     QStringList incomming=_indata.split (" ");
     if (incomming.size ()<2)
         {
@@ -120,7 +130,18 @@ void URLChecker::processSTDINData(const QByteArray &badata)
                             _url=_selQuery.value (0).toString ();
                         }
                     //когда все хорошо
+                    //если url платный
+                    if (_url.startsWith ("%payurl%"))
+                        {
+                            _url=_url.replace ("%payurl%",m_paymentURL);
+
+                        }
+
+
                     QString  _result=_url+"\n";
+
+
+
                     Logger::Write("Returning result '"+_result+"' ",Logger::Debug);
                     stdReader->writetoStdOut (_result.toAscii ());
                 }
@@ -136,7 +157,7 @@ void URLChecker::processSTDINData(const QByteArray &badata)
 
         }
 
-   // int et=t.elapsed ();
+    // int et=t.elapsed ();
     //Logger::Write ("Processing data from time'"+QString::number (et)+"' - millisecond",Logger::Debug);
 }
 

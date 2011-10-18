@@ -16,6 +16,12 @@ QString ConfigReader::databaseHost()
 
 }
 
+QString ConfigReader::paymentUrl()
+{
+return sets->value ("main/paymenturl","http://192.168.0.1/pay.php?url=").toString ();
+
+}
+
 qint16 ConfigReader::databasePort()
 {
     return sets->value ("database/port",5432).toInt ();

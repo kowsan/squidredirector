@@ -18,6 +18,7 @@ class URLChecker : public QObject
 
     private:
         QString m_sorryURL;
+        QString m_paymentURL;
         bool validateIp(const QString &ipaddr);
 
     signals:

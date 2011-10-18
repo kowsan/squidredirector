@@ -16,6 +16,7 @@ class ConfigReader : public QObject
         QString databasePassword();
         QString databaseName();
         QString sorryURL();
+        QString paymentUrl();
     private:
         QSettings *sets;
     signals:
